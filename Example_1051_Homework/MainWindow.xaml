@@ -1,0 +1,132 @@
+﻿<Window x:Class="Example_1051_Homework_10.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Example_1051_Homework_10"
+        xmlns:convert="clr-namespace:DreamConvertions"
+        Title="TelegramBot" Height="600" Width="800">
+    <Window.Resources>
+        <convert:TgMessageDataTemplateSelector x:Key="myDataTemplateSelector"></convert:TgMessageDataTemplateSelector>
+        <convert:UtcToLocalDateTimeConverter x:Key="UtcToLocal"></convert:UtcToLocalDateTimeConverter>
+        <DataTemplate x:Key="TextMessageTemplate">
+                <Border BorderBrush="DarkGray" Margin="{Binding Margin}" BorderThickness="1" CornerRadius="10" Background="{Binding Background}">
+                    <StackPanel Margin="5" >
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding From.Username}" Margin="0" FontSize="15"  Foreground="DarkBlue" />
+                            <TextBlock Grid.Column="1" Text="{Binding MessageType}" Margin="5" FontSize="10" Foreground="Gray" />
+                            <TextBlock Grid.Column="2" Text="{Binding Date, StringFormat={x:Static local:MainWindow.DateTimeformat},Converter={StaticResource UtcToLocal}}" Margin="5" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                        </Grid>
+                        <TextBlock Text="{Binding Text}" Margin="2" FontSize="16" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PhotoMessageTemplate">
+            <Border BorderBrush="DarkGray" Margin="{Binding Margin}" BorderThickness="1" CornerRadius="10" Background="{Binding Background}"> 
+                <StackPanel Margin="5" >
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding From.Username}" Margin="0" FontSize="15"  Foreground="DarkBlue" />
+                        <TextBlock Grid.Column="1" Text="{Binding MessageType}" Margin="5" FontSize="10" Foreground="Gray" />
+                        <TextBlock Grid.Column="2" Text="{Binding Date, StringFormat={x:Static local:MainWindow.DateTimeformat},Converter={StaticResource UtcToLocal}}" Margin="5" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                    </Grid>
+                    <Image Source="{Binding Text}"></Image>
+                    <!--<TextBlock Text= Margin="2" FontSize="16" TextWrapping="Wrap"/>-->
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid >
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="250" />
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="*" MinWidth="150"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel x:Name="stack_ME"
+                    Grid.Row="0 " Grid.Column="0">
+                
+            <TextBlock x:Name="txt_me" Text="{Binding Username}" FontSize="16" Margin="5" Padding="5" FontStyle="Italic" Foreground="DarkGray"></TextBlock>
+        </StackPanel>
+            <TextBlock x:Name="txt_time" 
+                       Grid.Column="2"
+                       Text="{Binding Time}" 
+                       HorizontalAlignment="Right"
+                       FontSize="16" 
+                       Margin="5" 
+                       Padding="5" 
+                       FontStyle="Italic" 
+                       Foreground="DarkGray"></TextBlock>
+        <ListBox x:Name="TelegramUserList" 
+                 Grid.Column="0" Grid.Row="1"
+                 MinWidth="100"
+                 HorizontalAlignment="Stretch" 
+                 VerticalAlignment="Stretch" 
+                 HorizontalContentAlignment="Stretch"
+                 Margin="0" 
+                 BorderThickness="0"
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="DarkGray" Margin="5" BorderThickness="1" CornerRadius="10">
+                        <StackPanel Margin="10" Orientation="Vertical">
+                            <TextBlock Text="{Binding User.Username}" Padding="2" Foreground="DarkBlue" FontSize="16" />
+                            <TextBlock Text="{Binding User.ID}" Padding="2" FontSize="12" FontStyle="Italic" Foreground="DarkGray"/>
+                            <!--<TextBlock Text="{Binding FirstName}" Padding="2" />-->
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <GridSplitter 
+            Grid.Column="1" Grid.RowSpan="2" 
+            Background="DarkGray" HorizontalAlignment="Stretch"
+            />
+        <ListBox x:Name="TelegramMessageList" 
+            Grid.Column="2" Grid.Row="1"
+            Margin="0" 
+            ItemsSource="{Binding ElementName=TelegramUserList, Path=SelectedItem.messages}"
+            HorizontalContentAlignment="Stretch"
+                 BorderThickness="0"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemTemplateSelector="{StaticResource myDataTemplateSelector}"
+            >
+            <!--<ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="DarkGray" Margin="{Binding Margin}" BorderThickness="1" CornerRadius="10" Background="{Binding Background}">
+                        <StackPanel Margin="5" >
+                            <Grid Margin="0,0,0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding From.Username}" Margin="0" FontSize="15"  Foreground="DarkBlue" />
+                                <TextBlock Grid.Column="1" Text="{Binding MessageType}" Margin="5" FontSize="10" Foreground="Gray" />
+                                <TextBlock Grid.Column="2" Text="{Binding Date, StringFormat={x:Static local:MainWindow.DateTimeformat},Converter={StaticResource UtcToLocal}}" Margin="5" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                            </Grid>
+                            <Image ></Image>
+                            <TextBlock Text="{Binding Text}" Margin="2" FontSize="16" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>-->
+
+            
+        </ListBox>
+    </Grid>
+</Window>
